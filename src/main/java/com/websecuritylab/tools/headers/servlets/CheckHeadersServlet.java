@@ -47,7 +47,7 @@ public class CheckHeadersServlet extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		res.sendRedirect("index.html"); // goto index.html
+		doPost(req, res);		// GET is used with the URL so the results can be copy/pasted into email/notes.
 	}
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
