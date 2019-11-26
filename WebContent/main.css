@@ -1,0 +1,11 @@
+tr {
+	outline: thin solid	
+}
+
+tr.compliant td{
+  background-color: lightgreen;
+}
+
+tr.noncompliant td{
+  background-color: yellow;
+}
