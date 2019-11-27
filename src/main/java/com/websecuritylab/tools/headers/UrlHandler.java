@@ -40,16 +40,22 @@ public final class UrlHandler {
 			Map<String, List<String>> outMap = new HashMap<>();
 			for (Map.Entry<String, List<String>> entry : inMap.entrySet()) {
 				for ( String valWithSemis : entry.getValue()) {
-					if (valWithSemis.contains(";")) {
-						List<String> strList = new ArrayList<>();
+					List<String> strList = new ArrayList<>();
+					if (valWithSemis.contains(";")) {					// Splits strings with ;
 						for (String s : valWithSemis.split(";"))
 						{
-						    System.out.println("Actually got several strings: " + s);
 						    strList.add(s.trim());
 						}
-						outMap.put(entry.getKey(), strList);
 					}
-					else outMap.put(entry.getKey(), entry.getValue());
+					else if (valWithSemis.contains(",")) {				// OR Splits strings with , but not both
+						for (String s : valWithSemis.split(","))
+						{
+						    strList.add(s.trim());
+						}
+					}
+					else strList = entry.getValue();
+					
+					outMap.put(entry.getKey(), strList);
 				}
 			}
 			
@@ -59,6 +65,19 @@ public final class UrlHandler {
 		} catch (IOException e) {
 			throw new SiteNotFoundException(e);
 		}
+	}
+	
+	private List<String> parseTokens(String str, String token){
+		List<String> strList = new ArrayList<>();
+		if (str.contains(token)) {
+			for (String s : str.split(token))
+			{
+			    strList.add(s.trim());
+			}
+		}
+		else strList.add(str);
+		
+		return strList;
 	}
 	
 	public String getWebPageContent() {
@@ -116,7 +135,14 @@ public final class UrlHandler {
 		}
 		return headerMap;
 	}
-
+	
+	//
+	// List<String> is created from semis or commas.  The reconstruction uses commas for both as default for List.toString()
+	// 
+	// Cache-Control: no-cache, no-store
+	// Content-Type: text/html;charset=UTF-8
+	// X-XSS-Protection: 1; mode=block
+	//
 	public static String generateRawHeaders(Map<String, List<String>> headerMap) {
 		StringBuffer sb = new StringBuffer();
 		for (Map.Entry<String, List<String>> entry : headerMap.entrySet()) {
