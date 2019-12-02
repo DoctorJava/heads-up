@@ -5,7 +5,11 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Heads Up Report</title>
-<link rel="stylesheet" type="text/css" href="main.css">
+<style>
+	tr { outline: thin solid; }
+	tr.compliant td { background-color: lightgreen; }
+	tr.noncompliant td { background-color: yellow; }
+</style>
 </head>
 <body>
 <fieldset>
@@ -21,7 +25,9 @@
 				<td>
 						<%-- ${ item.compliant ... only works with boolean, not Boolean } --%>
 						<c:if test="${item.rule.isRequired()}">
-							${ item.isCompliant() ? "<img src='images/check.png' border=0/>" : "<img src='images/cross.png' border=0/>"}				
+						<!-- &#9989; is Green Checkbox -->
+						<!--   -->
+							${ item.isCompliant() ? "&#9989; " : "&#10060;"}				
 						</c:if>
 				</td>
 				<td>${item.headerName}</td>
