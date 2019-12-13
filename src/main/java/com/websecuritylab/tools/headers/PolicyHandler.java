@@ -23,6 +23,30 @@ import com.websecuritylab.tools.headers.servlets.MaintainRulesServlet;
 public class PolicyHandler {
     private static final Logger logger = LoggerFactory.getLogger( PolicyHandler.class );  
     
+    enum COOKIE_RULE{SESSION, NO_DUPLICATES} 
+    
+	public static Rule getRule (COOKIE_RULE cr) {	
+		switch (cr) {
+			case SESSION:
+				Rule sessionRule = new Rule("Session", Arrays.asList("HttpOnly","secure") , CONTAINS_TYPE.ALL);
+		        List<Reference> refSessionCookie = new ArrayList<>();       
+		        refSessionCookie.add(new Reference("OWASP","https://www.owasp.org/index.php/HttpOnly"));
+		        refSessionCookie.add(new Reference("BurpSuite","https://portswigger.net/kb/issues/00500600_cookie-without-httponly-flag-set"));
+		        sessionRule.setReferences(refSessionCookie);
+		        return sessionRule;
+
+			case NO_DUPLICATES:
+				Rule dupRule = new Rule("Session", Arrays.asList("No Duplicates") , CONTAINS_TYPE.NONE);
+		        List<Reference> refNoDups = new ArrayList<>();       
+		        refNoDups.add(new Reference("BurpSuite","https://portswigger.net/kb/issues/00400a00_duplicate-cookies-set"));
+		        dupRule.setReferences(refNoDups);
+		        return dupRule;
+		        				
+		}
+        return null;
+       
+	}
+	
 	public static Policy createDefaultPolicy() {
 		
 		

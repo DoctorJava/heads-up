@@ -11,15 +11,20 @@ public final class Report {
 	private Policy _policy;
 	private List<ReportItem> _items;
 	private String _rawHeaders;
+	private List<Cookie> _cookies;
 
-	public Report(String name, Policy policy, List<ReportItem> items, String rawHeaders) {
+	public Report(String name, Policy policy, List<ReportItem> items, Headers headers) {
 		_name = name;
 		
 		_date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		_policy = policy;
 
 		_items = items;
-		_rawHeaders = rawHeaders;
+		_rawHeaders =  headers.getRawHeaders();
+		
+		_cookies = headers.getCookies();
+		
+		
 	}
 
 
@@ -41,6 +46,10 @@ public final class Report {
 	public String getUrl() {
 		return _url;
 	}
+	public List<Cookie> getCookies() {
+		return _cookies;
+	}
+
 
 	//
 	// Setters

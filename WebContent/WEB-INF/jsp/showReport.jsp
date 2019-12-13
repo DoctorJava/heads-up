@@ -12,11 +12,11 @@
 </style>
 </head>
 <body>
+
 <fieldset>
 	<legend>Heads Up Report: ${report.name}</legend>
 	Site: <a href="${report.url}">${report.url}</a>
-	<table
->
+	<table>
 		<tr>
 			<th></th><th>Header</th><th>Actual</th><th>Suggested</th><th>Reference</th>
 		</tr>
@@ -55,6 +55,48 @@
 			</tr>
 		</c:forEach>
 	</table>
+	<hr/>
+	<table>
+		<tr>
+			<th></th><th>Cookie</th><th>Actual</th><th>Suggested</th><th>Reference</th><th>Value</th>
+		</tr>
+		<c:forEach var="item" items="${report.cookies}">   <!--  var="cookie" didn't work because evidently ${cookie} picks up the cookie from HeadsUp -->
+			<tr class=${ item.isCompliant() != null ? ( item.isCompliant() ? "compliant" : "noncompliant" ) : "" }>
+				<td width=25>
+					<c:if test="${item.isCompliant() != null}">
+						${ item.isCompliant() ? "&#9989; " : "&#10060;"}	
+					</c:if>			
+				</td>
+				<td>${item.name}</td>
+				<td>
+					<c:forEach var="value" items="${item.directives}">
+						${value}</br>
+					</c:forEach>					
+				</td>
+				<td>
+					<c:if test="${ item.isCompliant() != null }">
+						<c:if test="${ item.isCompliant() != null }">
+							<c:forEach var="rule" items="${item.rules}">
+								<c:forEach var="values" items="${rule.contains}">
+									${values}</br>
+								</c:forEach>
+							</c:forEach>	
+						</c:if>					
+					</c:if>			
+				</td>
+				<td>
+					<c:forEach var="rule" items="${item.rules}">
+						<c:forEach var="ref" items="${rule.references}">
+							<a href="${ref.url}" target="_blank">${ref.title}</a> | 
+						</c:forEach>
+					</c:forEach>	
+				</td>
+				<td>${item.value}
+				</td>
+			</tr>
+		</c:forEach>
+	</table>
+	
 </fieldset>
 <fieldset>
 	<legend>Raw Response Headers</legend>

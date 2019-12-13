@@ -1,5 +1,6 @@
 package com.websecuritylab.tools.headers.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,18 +15,22 @@ public class Headers {
     
    
 	private CaseInsensitiveMap<String, List<String>> _headerMap;
+	//private CaseInsensitiveMap<String, List<String>> _cookieMap;
+	private List<Cookie> _cookies;
 	private String _rawHeaders;
 	
 	public Headers(Map<String, List<String>> headerMap) {
 		_headerMap = new CaseInsensitiveMap<String, List<String>>(headerMap);
 		_rawHeaders = UrlHandler.generateRawHeaders(headerMap);
+		_cookies  = UrlHandler.generateCookies(_rawHeaders);		
 	}
 	
 	public Headers(String rawHeaders) {
 		_rawHeaders = rawHeaders;
 		_headerMap  = UrlHandler.generateHeaderMap(rawHeaders);
+		_cookies  = UrlHandler.generateCookies(rawHeaders);		
 	}	
-	
+
 
 	
 	
@@ -46,6 +51,10 @@ public class Headers {
 	}
 	public void setRawHeaders(String rawHeaders) {
 		_rawHeaders = rawHeaders;
+	}
+
+	public List<Cookie> getCookies() {
+		return _cookies;
 	}
 	
 	

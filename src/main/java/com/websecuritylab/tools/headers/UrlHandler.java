@@ -4,15 +4,30 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+import com.websecuritylab.tools.headers.PolicyHandler.COOKIE_RULE;
 import com.websecuritylab.tools.headers.exceptions.InvalidUrlException;
 import com.websecuritylab.tools.headers.exceptions.SiteNotFoundException;
+import com.websecuritylab.tools.headers.model.Cookie;
+import com.websecuritylab.tools.headers.model.Rule;
+import com.websecuritylab.tools.headers.model.Rule.CONTAINS_TYPE;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+ 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.commons.validator.routines.UrlValidator;
 
@@ -33,7 +48,10 @@ public final class UrlHandler {
 
 
 	public Map<String, List<String>> getHeaderMap() throws MalformedURLException, SiteNotFoundException{
-		try {
+       
+		setAllTrustingSSL();			// This is required for handling self signed certs.  Heapp is not designed to test SSL compliance.
+
+       	try {
 			URLConnection conn = _url.openConnection();
 			//get all headers
 			Map<String, List<String>> inMap = conn.getHeaderFields();
@@ -58,13 +76,12 @@ public final class UrlHandler {
 					outMap.put(entry.getKey(), strList);
 				}
 			}
-			
-			
-			
 			return outMap;
 		} catch (IOException e) {
-			throw new SiteNotFoundException(e);
+			throw new SiteNotFoundException(e);				// ConnectException is thrown for 404
 		}
+       	
+       	
 	}
 	
 	private List<String> parseTokens(String str, String token){
@@ -100,7 +117,43 @@ public final class UrlHandler {
 
 		return urlValidator.isValid(urlStr);
 	}
-	
+
+	  private void setAllTrustingSSL() {
+	        // Create a trust manager that does not validate certificate chains
+	              TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+	                     public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+	                           return null;
+	                     }
+	 
+	                     public void checkClientTrusted(X509Certificate[] certs, String authType) {
+	                     }
+	 
+	                     public void checkServerTrusted(X509Certificate[] certs, String authType) {
+	                     }
+	              } };
+	              try {
+	              // Install the all-trusting trust manager
+	                     SSLContext sc = SSLContext.getInstance("SSL");
+	                     sc.init(null, trustAllCerts, new java.security.SecureRandom());
+	               HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+	              } catch (NoSuchAlgorithmException e1) {
+	                     // TODO Auto-generated catch block
+	                     e1.printStackTrace();
+	              }
+	              catch (KeyManagementException e1) {
+	                     // TODO Auto-generated catch block
+	                     e1.printStackTrace();
+	              }
+	        // Create all-trusting host name verifier
+	        HostnameVerifier allHostsValid = new HostnameVerifier() {
+	            public boolean verify(String hostname, SSLSession session) {
+	                return true;
+	            }
+	        };
+	        // Install the all-trusting host verifier
+	        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);          
+	       }
+	  
 	//
 //	public String getRawHeaders() throws MalformedURLException, SiteNotFoundException{
 //		StringBuffer sb = new StringBuffer();
@@ -128,13 +181,85 @@ public final class UrlHandler {
 			int i = line.indexOf(":");
 			if (i < 0) continue;
 			//List<String> values = Arrays.asList(line.substring(i + 1).split(";"));
-			List<String> values = Arrays.asList(line.replace(";",",").substring(i + 1).split(","));			// Some values are ; separated, but other are comma .  Both are treated the same for this tester
+			List<String> gotHeaderValues = Arrays.asList(line.replace(";",",").substring(i + 1).split(","));			// Some values are ; separated, but other are comma .  Both are treated the same for this tester
 																											// Content-Type	text/html; charset=UTF-8
 																											// Cache-Control: no-cache, no-store, max-age=0, must-revalidate
-			headerMap.put(line.substring(0, i), values);
+			String headerName = line.substring(0, i);
+			
+			if ( "Set-Cookie".equals(headerName) ) continue;				// The HeaderMap doesn't include cookies
+			
+			
+																	// Multiple lines with same header name are sometimes valid
+																	// https://stackoverflow.com/questions/48012994/is-it-fine-to-use-duplicate-response-header-with-same-value
+							
+			if ( headerMap.get(headerName) != null) {				// Already have some headers with this name.  This often occurs with "Set-Cookie"
+				headerMap.put(headerName, ListUtils.union(gotHeaderValues, headerMap.get(headerName)));					
+			}
+			else {
+				headerMap.put(headerName, gotHeaderValues );					
+			}
+			
 		}
 		return headerMap;
 	}
+	
+	public static List<Cookie> generateCookies(String rawHeaders) {
+		//HashMap<String, List<String>> headerMap = new HashMap<>();
+		//CaseInsensitiveMap<String, List<String>> cookieMap = new CaseInsensitiveMap<>();
+		List<String> cookieNames = new ArrayList<>();
+		List<Cookie> cookies = new ArrayList<>();
+		String[] lines = rawHeaders.split("\\r?\\n");
+		for (String line : lines) {
+			int iColon = line.indexOf(":");
+			int iEquals = line.indexOf("=");
+			int iSemi = line.indexOf(";");
+			if (iColon < 0 || iEquals < 0) continue;
+			if (iSemi < 0 ) iSemi = line.length();			// Assume semi-colon at end for getting cookieValue from line
+			
+			//List<String> values = Arrays.asList(line.substring(i + 1).split(";"));
+			//List<String> gotHeaderValues = Arrays.asList(line.replace(";",",").substring(iColon + 1).split(","));			// Some values are ; separated, but other are comma .  Both are treated the same for this tester
+																											// Content-Type	text/html; charset=UTF-8
+																											// Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+			String headerName = line.substring(0, iColon);
+			
+			if ( !"Set-Cookie".equals(headerName)  ) continue;				// THis method handles the multiple "Set-Cookie" headers
+			
+			String cookieName = line.substring(iColon+1, iEquals).trim();
+			String cookieValue = line.substring(iEquals+1, iSemi).trim();
+			
+			System.out.println("Got Cookie: " + cookieName );
+			
+																	// Duplicate cookies with the sane name are not allowed
+
+			List<String> directives = Arrays.asList(line.substring(iSemi + 1).split(";"));			// Some values are ; separated, but other are comma .  Both are treated the same for this tester
+		
+			Cookie cookie = new Cookie ( cookieName, cookieValue, directives);	
+			
+			if ( cookie.isSession() ) {
+				if ( ! line.contains("HttpOnly")) {
+					System.out.println("Didn't find 'HttpOnly' in the values: " + directives);
+					cookie.setCompliant(false);
+					cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.SESSION));
+				}
+				if ( ! line.contains("secure")) {
+					System.out.println("Didn't find 'secure' in the values: " + directives);
+					cookie.setCompliant(false);			
+					cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.SESSION));
+				}
+			}			
+			if ( cookieNames.contains(cookieName)) {
+				cookie.setDuplicate(true);
+				cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.NO_DUPLICATES));
+			}
+				
+			cookieNames.add(cookieName);			// THis local LIST is used to identify duplicate cookie names
+			cookies.add(cookie);					
+			
+
+		}
+		return cookies;
+	}
+	
 	
 	//
 	// List<String> is created from semis or commas.  The reconstruction uses commas for both as default for List.toString()
@@ -152,4 +277,6 @@ public final class UrlHandler {
 		}
 		return sb.toString();
 	}
+	
+  
 }

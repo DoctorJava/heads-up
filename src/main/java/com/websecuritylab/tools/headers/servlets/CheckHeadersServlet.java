@@ -143,7 +143,7 @@ public class CheckHeadersServlet extends HttpServlet {
         	
         }
  		
-        return new Report("Report Name", policy, items, headers.getRawHeaders());
+        return new Report("Report Name", policy, items, headers);
 
 	}
 	

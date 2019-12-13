@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.websecuritylab.tools.headers.model.Cookie;
 import com.websecuritylab.tools.headers.model.Headers;
 import com.websecuritylab.tools.headers.model.Policy;
 import com.websecuritylab.tools.headers.model.Rule;
@@ -15,6 +16,7 @@ import com.websecuritylab.tools.headers.servlets.MaintainRulesServlet;
 
 public class PolicyEnforcer {
     private static final Logger logger = LoggerFactory.getLogger( PolicyEnforcer.class );  
+    
 
 	private Headers _headers;
 	
@@ -120,6 +122,8 @@ public class PolicyEnforcer {
 		} 
 		return compliant;
 	}		
+
+	
 	
 //	public boolean isRequired(HEADER header) {
 //		return header.required();
