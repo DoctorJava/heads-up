@@ -58,7 +58,7 @@
 	<hr/>
 	<table>
 		<tr>
-			<th></th><th>Cookie</th><th>Actual</th><th>Suggested</th><th>Reference</th><th>Value</th>
+			<th></th><th>Cookie</th><th>Session</th><th>Actual</th><th>Suggested</th><th>Reference</th><th>Value</th>
 		</tr>
 		<c:forEach var="item" items="${report.cookies}">   <!--  var="cookie" didn't work because evidently ${cookie} picks up the cookie from HeadsUp -->
 			<tr class=${ item.isCompliant() != null ? ( item.isCompliant() ? "compliant" : "noncompliant" ) : "" }>
@@ -68,6 +68,9 @@
 					</c:if>			
 				</td>
 				<td>${item.name}</td>
+				<td align=center>
+					${ item.isSession() ? "&check; " : ""}				
+				</td>
 				<td>
 					<c:forEach var="value" items="${item.directives}">
 						${value}</br>

@@ -247,6 +247,7 @@ public final class UrlHandler {
 			Cookie cookie = new Cookie ( cookieName, cookieValue, directives);	
 			
 			if ( cookie.isSession() ) {
+				cookie.setCompliant(true);			// Session cookies will have COMPLIANT set true/false.  Other cookies are NULL
 				if ( ! lineContains(line,"HttpOnly", policy.isCaseSensitiveValues())) {
 					System.out.println("Didn't find 'HttpOnly' in the values: " + directives);
 					cookie.setCompliant(false);
@@ -255,10 +256,10 @@ public final class UrlHandler {
 					System.out.println("Didn't find 'secure' in the values: " + directives);
 					cookie.setCompliant(false);			
 				}
-				if (cookie.isCompliant() != null && cookie.isCompliant() == false ) cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.SESSION));   // Set for any of the above SESSION rules
+				if (cookie.isCompliant() == false ) cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.SESSION));   // Set for any of the above SESSION rules
 			}			
 			if ( cookieNames.contains(cookieName)) {
-				cookie.setDuplicate(true);
+				cookie.setDuplicate(true);						// Also sets COMPLIANT=false
 				cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.NO_DUPLICATES));
 			}
 				
