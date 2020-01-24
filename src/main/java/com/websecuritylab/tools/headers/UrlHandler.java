@@ -255,7 +255,7 @@ public final class UrlHandler {
 					System.out.println("Didn't find 'secure' in the values: " + directives);
 					cookie.setCompliant(false);			
 				}
-				if (! cookie.isCompliant()	) cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.SESSION));   // Set for any of the above SESSION rules
+				if (cookie.isCompliant() != null && cookie.isCompliant() == false ) cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.SESSION));   // Set for any of the above SESSION rules
 			}			
 			if ( cookieNames.contains(cookieName)) {
 				cookie.setDuplicate(true);
