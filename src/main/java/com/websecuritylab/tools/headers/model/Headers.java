@@ -19,16 +19,16 @@ public class Headers {
 	private List<Cookie> _cookies;
 	private String _rawHeaders;
 	
-	public Headers(Map<String, List<String>> headerMap) {
+	public Headers(Map<String, List<String>> headerMap, Policy policy) {
 		_headerMap = new CaseInsensitiveMap<String, List<String>>(headerMap);
 		_rawHeaders = UrlHandler.generateRawHeaders(headerMap);
-		_cookies  = UrlHandler.generateCookies(_rawHeaders);		
+		_cookies  = UrlHandler.generateCookies(_rawHeaders, policy);		
 	}
 	
-	public Headers(String rawHeaders) {
+	public Headers(String rawHeaders, Policy policy) {
 		_rawHeaders = rawHeaders;
 		_headerMap  = UrlHandler.generateHeaderMap(rawHeaders);
-		_cookies  = UrlHandler.generateCookies(rawHeaders);		
+		_cookies  = UrlHandler.generateCookies(rawHeaders, policy);		
 	}	
 
 

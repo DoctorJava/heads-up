@@ -60,6 +60,7 @@ public class CheckHeadersServlet extends HttpServlet {
 //				Map<String, List<String>> headerMap = handler.getHeaderMap();
 //				Headers headers = new Headers(headerMap);
 
+			Policy policy = getPolicy(true);
 			Headers headers;
 			if (processURL) {
 				if (testUrl == null || testUrl.length() == 0) {
@@ -69,17 +70,18 @@ public class CheckHeadersServlet extends HttpServlet {
 				if (!testUrl.startsWith("http://") && !testUrl.startsWith("https://"))
 					testUrl = "http://" + testUrl;
 				logger.info("Got testUrl: " + testUrl);
-				headers = getHeadersFromUrl(testUrl);
+				headers = getHeadersFromUrl(testUrl, policy);
 			} else {
 				String testHeaders = req.getParameter(DoPostParams.TEST_HEADERS);
 				logger.info("Got testHeaders: " + testHeaders);
 
-				headers = new Headers(testHeaders);
+				headers = new Headers(testHeaders, policy);
+				
 			}
 
 			PolicyEnforcer enforcer = new PolicyEnforcer(headers);
 
-			Report report = getReport(enforcer, getPolicy(true));
+			Report report = getReport(enforcer, policy);
 			report.setUrl(testUrl);
 			req.setAttribute("report", report);
 			req.setAttribute("policy", report.getPolicy());		// JSPF needs ${policy} because it is show on both REPORT and MAINTENANCE screen
@@ -103,11 +105,11 @@ public class CheckHeadersServlet extends HttpServlet {
 		return policy;
 	}
 	
-	private Headers getHeadersFromUrl(String url) throws MalformedURLException, InvalidUrlException, SiteNotFoundException {
+	private Headers getHeadersFromUrl(String url, Policy policy) throws MalformedURLException, InvalidUrlException, SiteNotFoundException {
 		UrlHandler handler = new UrlHandler(url);
 
 		Map<String, List<String>> headerMap = handler.getHeaderMap();
-		return new Headers(headerMap);
+		return new Headers(headerMap, policy);
 
 	}
 	

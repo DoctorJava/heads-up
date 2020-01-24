@@ -8,6 +8,7 @@ import com.websecuritylab.tools.headers.PolicyHandler.COOKIE_RULE;
 import com.websecuritylab.tools.headers.exceptions.InvalidUrlException;
 import com.websecuritylab.tools.headers.exceptions.SiteNotFoundException;
 import com.websecuritylab.tools.headers.model.Cookie;
+import com.websecuritylab.tools.headers.model.Policy;
 import com.websecuritylab.tools.headers.model.Rule;
 import com.websecuritylab.tools.headers.model.Rule.CONTAINS_TYPE;
 
@@ -203,18 +204,26 @@ public final class UrlHandler {
 		return headerMap;
 	}
 	
-	public static List<Cookie> generateCookies(String rawHeaders) {
+	//
+	// Note that Policy rule is enforced when examining each cookie
+	// Whereas the other rules are enforced by looking through the Rules to see if a match is found
+	//
+	
+	public static List<Cookie> generateCookies(String rawHeaders, Policy policy) {
 		//HashMap<String, List<String>> headerMap = new HashMap<>();
 		//CaseInsensitiveMap<String, List<String>> cookieMap = new CaseInsensitiveMap<>();
 		List<String> cookieNames = new ArrayList<>();
 		List<Cookie> cookies = new ArrayList<>();
 		String[] lines = rawHeaders.split("\\r?\\n");
 		for (String line : lines) {
+			line = line.replace(",",";");		//// Sometimes Cookie directives are ; separated, but other are comma.  Both are treated the same for this tester
 			int iColon = line.indexOf(":");
 			int iEquals = line.indexOf("=");
-			int iSemi = line.indexOf(";");
+			
+			if ( !";".equals(line.substring(line.length() - 1))) line += ";";   // Add a semicolon to the end-of-line if it isn't present
+			int iSemi = line.indexOf(";");										// There is always at least one ; because of the line above
 			if (iColon < 0 || iEquals < 0) continue;
-			if (iSemi < 0 ) iSemi = line.length();			// Assume semi-colon at end for getting cookieValue from line
+
 			
 			//List<String> values = Arrays.asList(line.substring(i + 1).split(";"));
 			//List<String> gotHeaderValues = Arrays.asList(line.replace(";",",").substring(iColon + 1).split(","));			// Some values are ; separated, but other are comma .  Both are treated the same for this tester
@@ -226,26 +235,27 @@ public final class UrlHandler {
 			
 			String cookieName = line.substring(iColon+1, iEquals).trim();
 			String cookieValue = line.substring(iEquals+1, iSemi).trim();
-			
-			System.out.println("Got Cookie: " + cookieName );
+			String directStr= line.substring(iSemi+1).trim();
+			//System.out.println("Got Cookie: " + cookieName );
 			
 																	// Duplicate cookies with the sane name are not allowed
 
-			List<String> directives = Arrays.asList(line.substring(iSemi + 1).split(";"));			// Some values are ; separated, but other are comma .  Both are treated the same for this tester
-		
+			List<String> directives = Arrays.asList(directStr.split(";"));			// Values are separated by comma
+
+			System.out.println("Got Cookie Directive String: " + directStr + " with directives List: "  + directives);
+
 			Cookie cookie = new Cookie ( cookieName, cookieValue, directives);	
 			
 			if ( cookie.isSession() ) {
-				if ( ! line.contains("HttpOnly")) {
+				if ( ! lineContains(line,"HttpOnly", policy.isCaseSensitiveValues())) {
 					System.out.println("Didn't find 'HttpOnly' in the values: " + directives);
 					cookie.setCompliant(false);
-					cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.SESSION));
 				}
-				if ( ! line.contains("secure")) {
+				if ( ! lineContains(line,"secure", policy.isCaseSensitiveValues())) {
 					System.out.println("Didn't find 'secure' in the values: " + directives);
 					cookie.setCompliant(false);			
-					cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.SESSION));
 				}
+				if (! cookie.isCompliant()	) cookie.addRules(PolicyHandler.getRule(COOKIE_RULE.SESSION));   // Set for any of the above SESSION rules
 			}			
 			if ( cookieNames.contains(cookieName)) {
 				cookie.setDuplicate(true);
@@ -258,6 +268,11 @@ public final class UrlHandler {
 
 		}
 		return cookies;
+	}
+	
+	private static boolean lineContains( String line, String directive, boolean caseSensitive) {
+		if ( caseSensitive ) return line.contains(directive);
+		else return line.toLowerCase().contains(directive.toLowerCase());
 	}
 	
 	

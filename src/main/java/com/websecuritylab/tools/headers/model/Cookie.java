@@ -74,7 +74,8 @@ public class Cookie {
 	//
 	//
 	public boolean isSession() {
-		return _name.toLowerCase().contains("session");
+		return _name.toLowerCase().contains("sess");			// Matches on default name: JSESSIONID, PHPSESSID, ASP.NET_SessionId
+		//return _name.toLowerCase().contains("session");
 	}
 	
 	
