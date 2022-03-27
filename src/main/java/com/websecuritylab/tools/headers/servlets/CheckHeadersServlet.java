@@ -3,17 +3,18 @@ package com.websecuritylab.tools.headers.servlets;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,17 +22,13 @@ import com.websecuritylab.tools.headers.PolicyEnforcer;
 import com.websecuritylab.tools.headers.PolicyHandler;
 import com.websecuritylab.tools.headers.UrlHandler;
 import com.websecuritylab.tools.headers.constants.DoPostParams;
-import com.websecuritylab.tools.headers.constants.ReqAttributes;
 import com.websecuritylab.tools.headers.exceptions.InvalidUrlException;
 import com.websecuritylab.tools.headers.exceptions.SiteNotFoundException;
+import com.websecuritylab.tools.headers.model.Headers;
+import com.websecuritylab.tools.headers.model.Policy;
 import com.websecuritylab.tools.headers.model.Report;
 import com.websecuritylab.tools.headers.model.ReportItem;
 import com.websecuritylab.tools.headers.model.Rule;
-import com.websecuritylab.tools.headers.model.Headers;
-import com.websecuritylab.tools.headers.model.Policy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Servlet implementation class CheckHeaders

@@ -216,6 +216,7 @@ public final class UrlHandler {
 		List<Cookie> cookies = new ArrayList<>();
 		String[] lines = rawHeaders.split("\\r?\\n");
 		for (String line : lines) {
+			if ( line.length() <= 0 ) continue;
 			line = line.replace(",",";");		//// Sometimes Cookie directives are ; separated, but other are comma.  Both are treated the same for this tester
 			int iColon = line.indexOf(":");
 			int iEquals = line.indexOf("=");

@@ -77,14 +77,17 @@ public class PolicyHandler {
 		//String containsExact_Cache = "no-store";
         //rules.add(new Rule("Cache-Control", containsExact_Cache)); 
 		List<String> contains_Cache = Arrays.asList("no-store");
-		Rule ruleCache = new Rule("Cache-Control", contains_Cache, CONTAINS_TYPE.ALL);
+		Rule ruleCache = new Rule("Cache-Control", contains_Cache, CONTAINS_TYPE.ONLY);
 		List<Reference> refCache = new ArrayList<>();
 		refCache.add(new Reference("HyperText Transfer Protocol: A Short Course","https://condor.depaul.edu/dmumaugh/readings/handouts/SE435/HTTP/node24.html"));
 		refCache.add(new Reference("Mozilla MDN","https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control"));
 		ruleCache.setReferences(refCache);
         rules.add(ruleCache);
         
-        Rule ruleHSTS = new Rule("strict-transport-security", true);
+        //Rule ruleHSTS = new Rule("strict-transport-security", true);
+		List<String> contains_Hsts = Arrays.asList("max-age=31536000","includeSubDomains");
+		Rule ruleHSTS = new Rule("strict-transport-security", contains_Hsts, CONTAINS_TYPE.ALL);
+
 		List<Reference> refHSTS = new ArrayList<>();
 		refHSTS.add(new Reference("OWASP HSTS Cheatsheet","https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html"));		
 		refHSTS.add(new Reference("Wikipedia: HSTS","https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security"));
@@ -100,7 +103,7 @@ public class PolicyHandler {
         rules.add(ruleXframe);
         
         List<String> containsAny_Xss = Arrays.asList("1");
-        Rule ruleXss = new Rule("X-XSS-Protection", containsAny_Xss, CONTAINS_TYPE.ANY);
+        Rule ruleXss = new Rule("X-XSS-Protection", containsAny_Xss, CONTAINS_TYPE.ONLY);
         List<Reference> refXss = new ArrayList<>();
         refXss.add(new Reference("Mozilla MDN","https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection"));
         refXss.add(new Reference("KeyCDN","https://www.keycdn.com/blog/x-xss-protection"));
@@ -114,6 +117,14 @@ public class PolicyHandler {
         refNosniff.add(new Reference("Denim Group Blog","https://www.denimgroup.com/resources/blog/2019/05/mime-sniffing-in-browsers-and-the-security-implications/"));
         ruleNosniff.setReferences(refNosniff);
         rules.add(ruleNosniff); 
+        
+		List<String> contains_referrer = Arrays.asList("no-referrer");
+		Rule ruleReferrer = new Rule("Referrer-Policy", contains_referrer, CONTAINS_TYPE.ONLY);
+		List<Reference> refReferrer = new ArrayList<>();		
+		refReferrer.add(new Reference("OWASP Referrer-Policy","https://owasp.org/www-project-secure-headers/#referrer-policy"));
+		refReferrer.add(new Reference("Scott Helme: A new security header: Referrer Policy","https://scotthelme.co.uk/a-new-security-header-referrer-policy/"));		
+		ruleReferrer.setReferences(refReferrer);
+        rules.add(ruleReferrer);
          
         return new Policy("Default Policy", rules);
 	}
