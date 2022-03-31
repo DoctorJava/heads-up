@@ -1,7 +1,9 @@
 package com.websecuritylab.tools.headers.servlets;
 
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.websecuritylab.tools.headers.PolicyEnforcer;
 import com.websecuritylab.tools.headers.PolicyHandler;
 import com.websecuritylab.tools.headers.UrlHandler;
@@ -42,60 +46,68 @@ public class CheckHeadersServlet extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-
+    							// GET is used with the URL so the results can be copy/pasted into email/notes.
+    
+    
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		doPost(req, res);		// GET is used with the URL so the results can be copy/pasted into email/notes.
+		Policy policy = getPolicy(true);
+		System.out.println("Got Policy from GET: " + policy);
+		doBoth(req, res, policy);
 	}
-	
+
+			// Custom policy.json requires post, which does not support URL being copied into email/notes
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		System.out.println("Got SELECT: " + req.getParameter(DoPostParams.POLICY));
+	    String policyStr = req.getParameter(DoPostParams.POLICY);
+        Gson gson = new Gson();
+        Policy policy = gson.fromJson(policyStr, Policy.class);
+		System.out.println("Got Policy from POST: " + policy);
+		doBoth(req, res, policy);
+	}
+
+	private void doBoth(HttpServletRequest req, HttpServletResponse res, Policy policy) throws ServletException, IOException {
+		String reportName = req.getParameter(DoPostParams.REPORT_NAME);
 		boolean processURL = ("true".equals(req.getParameter(DoPostParams.PROCESS_URL)));
 		String testUrl = req.getParameter(DoPostParams.TEST_URL);
-
 		try {
-//				UrlHandler handler = new UrlHandler(testUrl);
-//				Map<String, List<String>> headerMap = handler.getHeaderMap();
-//				Headers headers = new Headers(headerMap);
+//			UrlHandler handler = new UrlHandler(testUrl);
+//			Map<String, List<String>> headerMap = handler.getHeaderMap();
+//			Headers headers = new Headers(headerMap);
 
-			Policy policy = getPolicy(true);
-			Headers headers;
-			if (processURL) {
-				if (testUrl == null || testUrl.length() == 0) {
-					res.sendRedirect("index.html"); // goto index.html
-					return;
-				}
-				if (!testUrl.startsWith("http://") && !testUrl.startsWith("https://"))
-					testUrl = "http://" + testUrl;
-				logger.info("Got testUrl: " + testUrl);
-				headers = getHeadersFromUrl(testUrl, policy);
-			} else {
-				String testHeaders = req.getParameter(DoPostParams.TEST_HEADERS);
-				logger.info("Got testHeaders: " + testHeaders);
-
-				headers = new Headers(testHeaders, policy);
-				
+		Headers headers;
+		if (processURL) {
+			if (testUrl == null || testUrl.length() == 0) {
+				res.sendRedirect("index.html"); // goto index.html
+				return;
 			}
+			if (!testUrl.startsWith("http://") && !testUrl.startsWith("https://"))
+				testUrl = "http://" + testUrl;
+			logger.info("Got testUrl: " + testUrl);
+			headers = getHeadersFromUrl(testUrl, policy);
+		} else {
+			String testHeaders = req.getParameter(DoPostParams.TEST_HEADERS);
+			logger.info("Got testHeaders: " + testHeaders);
 
-			PolicyEnforcer enforcer = new PolicyEnforcer(headers);
-
-			Report report = getReport(enforcer, policy);
-			report.setUrl(testUrl);
-			req.setAttribute("report", report);
-			req.setAttribute("policy", report.getPolicy());		// JSPF needs ${policy} because it is show on both REPORT and MAINTENANCE screen
-
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);
-			// response.setContentType("text/html;charset=UTF-8");
-			dispatcher.forward(req, res);
-		} catch (SiteNotFoundException e) {
-			e.printStackTrace();
-		} catch (InvalidUrlException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			headers = new Headers(testHeaders, policy);
+			
 		}
 
+		PolicyEnforcer enforcer = new PolicyEnforcer(headers);
+
+		Report report = getReport(reportName, enforcer, policy);
+		report.setUrl(testUrl);
+		req.setAttribute("report", report);
+		req.setAttribute("policy", report.getPolicy());		// JSPF needs ${policy} because it is show on both REPORT and MAINTENANCE screen
+
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);
+		// response.setContentType("text/html;charset=UTF-8");
+		dispatcher.forward(req, res);
+	} catch (SiteNotFoundException e) {
+		e.printStackTrace();
+	} catch (InvalidUrlException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}		
 	}
-
-
 	
 	private Policy getPolicy(boolean useDefault ) {
 		Policy policy = PolicyHandler.savedPolicy(MaintainRulesServlet.JSON_READ_POLICY);
@@ -120,7 +132,7 @@ public class CheckHeadersServlet extends HttpServlet {
 //	}
 	
 	//private Report getReport(PolicyEnforcer enforcer, Headers headers) {
-	private Report getReport(PolicyEnforcer enforcer, Policy policy) {
+	private Report getReport(String reportName, PolicyEnforcer enforcer, Policy policy) {
         List<ReportItem> items = new ArrayList<>();
         Headers headers = enforcer.getHeaders();
         
@@ -142,7 +154,7 @@ public class CheckHeadersServlet extends HttpServlet {
         	
         }
  		
-        return new Report("Report Name", policy, items, headers);
+        return new Report(reportName, policy, items, headers);
 
 	}
 	
