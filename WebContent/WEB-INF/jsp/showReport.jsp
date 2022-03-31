@@ -15,6 +15,7 @@
 
 <fieldset>
 	<legend>Heads Up Report: ${report.name}</legend>
+	<h3>Pass: ${report.pass}</h3>
 	Site: <a href="${report.url}">${report.url}</a>
 	<table>
 		<tr>

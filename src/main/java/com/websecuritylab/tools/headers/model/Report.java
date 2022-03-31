@@ -12,6 +12,7 @@ public final class Report {
 	private List<ReportItem> _items;
 	private String _rawHeaders;
 	private List<Cookie> _cookies;
+	private Boolean _pass = true;
 
 	public Report(String name, Policy policy, List<ReportItem> items, Headers headers) {
 		_name = name;
@@ -19,11 +20,12 @@ public final class Report {
 		_date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		_policy = policy;
 
-		_items = items;
 		_rawHeaders =  headers.getRawHeaders();
 		
 		_cookies = headers.getCookies();
 		
+		_items = items;
+		for ( ReportItem item: items ) if (!item.isCompliant()) _pass=false;
 		
 	}
 
@@ -48,6 +50,9 @@ public final class Report {
 	}
 	public List<Cookie> getCookies() {
 		return _cookies;
+	}
+	public Boolean getPass() {
+		return _pass;
 	}
 
 
