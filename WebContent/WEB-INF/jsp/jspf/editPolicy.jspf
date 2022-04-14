@@ -1,0 +1,41 @@
+Got Types:
+<ul>
+<%   
+java.util.List<java.util.Map<String,String>> containsTypeList=(java.util.List<java.util.Map<String, String>>)request.getAttribute("containsTypeList");    
+
+for (java.util.Map containsType: containsTypeList) {
+%>
+
+<li><input value="<%=containsType %>"/>
+
+
+<%}%>
+</ul>
+
+<form action="MaintainRules">
+	<table>
+		<tr>
+			<th></th><th>Header</th><th>Required</th><th colspan=2>Contains</th><th>References</th>
+		</tr>
+		<c:forEach var="rule" items="${policy.rules}">
+			<tr>
+				<td>
+	
+				</td>
+				<td>${rule.headerName}</td>
+				<td>${rule.required}</td>
+				<td><select name=containsType >
+						<option> 
+					</select>
+				</td>
+				<td>${rule.contains}</td>
+				<td>
+					<c:forEach var="ref" items="${rule.references}">
+						<a href="${ref.url}" target="_blank">${ref.title}</a> | 
+					</c:forEach>
+				</td>
+			</tr>
+		</c:forEach>
+	</table>
+<input type=submit />
+</form>

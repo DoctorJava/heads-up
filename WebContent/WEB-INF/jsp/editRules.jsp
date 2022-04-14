@@ -7,11 +7,11 @@
 <title>Heads Up Rules</title>
 </head>
 <body>
-<h1>Heads Up Rules</h1>
-(<a href=MaintainRules?edit>Edit Rules</a>)
+<h1>Edit Rules</h1>
+(<a href=MaintainRules>Show Rules</a>)
 <fieldset>
 	<legend>Active Policy: ${policy.name}</legend>
-	<%@ include file="jspf/showPolicy.jspf" %>
+	<%@ include file="jspf/editPolicy.jspf" %>
 </fieldset>
 
 <fieldset>

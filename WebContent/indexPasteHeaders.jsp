@@ -13,9 +13,10 @@
 		
 		<h3>Test Method:</h3>
 		<div style="margin-left:50px">
-			Enter URL: <input type=text name="testUrl" />
+			Enter URL : <input name=testType type=radio onclick="window.location.href='index.jsp'" />
 			</br>
-			Paste Headers : <input name=testType type=radio onclick="window.location.href='indexPasteHeaders.jsp'"/><br/>			
+			Paste Headers:<input name=testType type=radio checked disabled "/>
+				<textarea  name="testHeaders" rows="8" cols="50"  style="vertical-align:top"></textarea>
 		</div>
 		
 		<h3>Rules:</h3>
@@ -29,7 +30,7 @@
 			Custom : <input name=rulesType type=radio onclick="window.location.href='indexPasteRules.jsp'"/><br/>			
 		</div>
 		
-		<button type="submit" name=processUrl value=true >Check Headers</button>
+		<button type="submit" name=processUrl value=false >Check Headers</button>
 		
 	</form>	
 </fieldset>

@@ -108,7 +108,7 @@
 </fieldset>
 <fieldset>
 <legend>Rules</legend>
-	<%@ include file="showPolicy.jspf" %>
+	<%@ include file="jspf/showPolicy.jspf" %>
 </fieldset>
 </body>
 </html>

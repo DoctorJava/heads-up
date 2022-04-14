@@ -10,7 +10,8 @@
 	<legend>HTTP Security Header Test</legend>
 	<form action="CheckHeaders" method=POST >
 		<h3>Report Name: <input type=text name=reportName /></h3>
-		<%@ include file="formTarget.jspf" %>  
+		
+		<h3>Target URL: <input type=text name="testUrl" /></h3>
 	
 		<h3>Rules:</h3>
 		<div style="margin-left:50px">

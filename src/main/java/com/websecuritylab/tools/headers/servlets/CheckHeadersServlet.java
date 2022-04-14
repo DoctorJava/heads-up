@@ -24,12 +24,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.websecuritylab.tools.headers.PolicyEnforcer;
 import com.websecuritylab.tools.headers.PolicyHandler;
+import com.websecuritylab.tools.headers.ReferenceHandler;
 import com.websecuritylab.tools.headers.UrlHandler;
 import com.websecuritylab.tools.headers.constants.DoPostParams;
+import com.websecuritylab.tools.headers.constants.ReqAttributes;
 import com.websecuritylab.tools.headers.exceptions.InvalidUrlException;
 import com.websecuritylab.tools.headers.exceptions.SiteNotFoundException;
 import com.websecuritylab.tools.headers.model.Headers;
 import com.websecuritylab.tools.headers.model.Policy;
+import com.websecuritylab.tools.headers.model.Reference;
 import com.websecuritylab.tools.headers.model.Report;
 import com.websecuritylab.tools.headers.model.ReportItem;
 import com.websecuritylab.tools.headers.model.Rule;
@@ -76,7 +79,7 @@ public class CheckHeadersServlet extends HttpServlet {
 		Headers headers;
 		if (processURL) {
 			if (testUrl == null || testUrl.length() == 0) {
-				res.sendRedirect("index.html"); // goto index.html
+				res.sendRedirect("index.jsp"); // goto index.html
 				return;
 			}
 			if (!testUrl.startsWith("http://") && !testUrl.startsWith("https://"))
@@ -96,7 +99,7 @@ public class CheckHeadersServlet extends HttpServlet {
 		Report report = getReport(reportName, enforcer, policy);
 		report.setUrl(testUrl);
 		req.setAttribute("report", report);
-		req.setAttribute("policy", report.getPolicy());		// JSPF needs ${policy} because it is show on both REPORT and MAINTENANCE screen
+		req.setAttribute(ReqAttributes.POLICY, report.getPolicy());		// JSPF needs ${policy} because it is show on both REPORT and MAINTENANCE screen
 
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);
 		// response.setContentType("text/html;charset=UTF-8");
@@ -111,6 +114,10 @@ public class CheckHeadersServlet extends HttpServlet {
 	
 	private Policy getPolicy(boolean useDefault ) {
 		Policy policy = PolicyHandler.savedPolicy(MaintainRulesServlet.JSON_READ_POLICY);
+		Map<String,List<Reference>> refMap = ReferenceHandler.savedReferences(MaintainRulesServlet.JSON_READ_REFERENCES);
+		for ( Rule r: policy.getRules()) {
+			System.out.println("Adding Rule ("+r.getHeaderName()+") with References: " + refMap.get(r.getHeaderName()));
+		}
 		return policy;
 	}
 	

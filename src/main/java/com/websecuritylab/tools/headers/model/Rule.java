@@ -4,7 +4,23 @@ import java.util.List;
 
 public final class Rule {
 	
-	public static enum CONTAINS_TYPE { MUST, ONLY, ANY, ALL, NONE }
+//	public static enum HEADER_NAME { CONTENT_TYPE("Content-Type"), CACHE_CONTROL("Cache-Control"), HSTS("strict-transport-security"), XFRAME("x-frame-options"), xss("X-XSS-Protection"), CONTENT_TYPE_OPTIONS("x-content-type-options"), REFERRER("Referrer-Policy");
+//	private String name;
+//	HEADER_NAME(String value) {name=value;}
+//	public String getValue() { return name; }
+//	}
+	
+	//public static enum CONTAINS_TYPE { MUST, ONLY, ANY, ALL, NONE }
+	public static enum CONTAINS_TYPE { ONLY, ANY, ALL, NONE }
+	
+	public static String HEADER_CONTENT_TYPE = "Content-Type";
+	public static String HEADER_CACHE_CONTROL = "Cache-Control";
+	public static String HEADER_HSTS = "strict-transport-security";
+	public static String HEADER_XFRAME = "x-frame-options";
+	public static String HEADER_XSS = "X-XSS-Protection";
+	public static String HEADER_CONTENT_TYPE_OPTIONS = "x-content-type-options";
+	public static String HEADER_REFERRER = "Referrer-Policy";
+	
 	
 	private String headerName;
 	private boolean required;
