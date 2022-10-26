@@ -3,6 +3,8 @@ package com.websecuritylab.tools.headers.model;
 import java.util.List;
 
 public class Policy {
+    public static final String DEFAULT = "default"; 
+  
     private String name;
     private boolean caseSensitiveValues = false;
     private List<Rule> rules;

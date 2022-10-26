@@ -8,6 +8,8 @@
 </head>
 <body>
 <h1>Edit Rules</h1>
+<h2>Selected Policy: ${policyName}</h2>
+
 (<a href=MaintainRules>Show Rules</a>)
 <fieldset>
 	<legend>Active Policy: ${policy.name}</legend>

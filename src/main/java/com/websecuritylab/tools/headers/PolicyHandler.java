@@ -23,6 +23,9 @@ import com.websecuritylab.tools.headers.servlets.MaintainRulesServlet;
 public class PolicyHandler {
     private static final Logger logger = LoggerFactory.getLogger( PolicyHandler.class );  
     
+	public static final String POLICY_DIR  = "/opt/apps/data/json/";     					
+	public static final String POLICY_EXT  = "json";     					
+    
     enum COOKIE_RULE{SESSION, NO_DUPLICATES} 
     
 	public static Rule getRule (COOKIE_RULE cr) {	
@@ -45,6 +48,10 @@ public class PolicyHandler {
 		}
         return null;
        
+	}
+	
+	public static List<String> getPolicyNames(){
+		return FileHandler.getFilenamesInFolder(true,POLICY_DIR,POLICY_EXT);
 	}
 	
 	public static Policy createDefaultPolicy() {
@@ -129,7 +136,8 @@ public class PolicyHandler {
         return new Policy("Default Policy", rules);
 	}
 	
-	public static Policy savedPolicy(String filename) {
+	public static Policy getPolicy(String policyName) {
+		String filename = POLICY_DIR + policyName + "." + POLICY_EXT;
 		Policy policy = null;	
 		try {
 			policy = PolicyHandler.readPolicy(filename);
@@ -141,6 +149,7 @@ public class PolicyHandler {
 	}
 
 	private static Policy readPolicy(String filename) throws FileNotFoundException {
+		System.out.println("Reading policy from file:" + filename);
 		Gson gson = new Gson();
 		Policy policy = null;
 		try (Reader reader = new FileReader(filename)) {

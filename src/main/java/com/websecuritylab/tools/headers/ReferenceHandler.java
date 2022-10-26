@@ -101,7 +101,7 @@ public class ReferenceHandler {
 
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (FileWriter writer = new FileWriter(filename)) {
-        	System.out.println("Writing References JSON:" + writer);
+        	//System.out.println("Writing References JSON:" + writer);
             gson.toJson(referenceMap, writer);
         } catch (IOException e) {
             e.printStackTrace();

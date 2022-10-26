@@ -55,6 +55,9 @@ public class CheckHeadersServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		Policy policy = getPolicy(true);
 		System.out.println("Got Policy from GET: " + policy);
+		//System.out.println("Got URL from GET: " + req.getRequestURI() + "?" + req.getQueryString());
+		System.out.println("Got URL from GET: " + UrlHandler.getURL(req));
+		req.setAttribute(DoPostParams.REQUEST_URL, UrlHandler.getURL(req));
 		doBoth(req, res, policy);
 	}
 
@@ -113,7 +116,7 @@ public class CheckHeadersServlet extends HttpServlet {
 	}
 	
 	private Policy getPolicy(boolean useDefault ) {
-		Policy policy = PolicyHandler.savedPolicy(MaintainRulesServlet.JSON_READ_POLICY);
+		Policy policy = PolicyHandler.getPolicy(MaintainRulesServlet.JSON_READ_POLICY);
 		Map<String,List<Reference>> refMap = ReferenceHandler.savedReferences(MaintainRulesServlet.JSON_READ_REFERENCES);
 		for ( Rule r: policy.getRules()) {
 			System.out.println("Adding Rule ("+r.getHeaderName()+") with References: " + refMap.get(r.getHeaderName()));

@@ -7,26 +7,30 @@
 <title>Heads Up Rules</title>
 </head>
 <body>
-<h1>Heads Up Rules</h1>
-(<a href=MaintainRules?edit>Edit Rules</a>)
+
+
+<h1>View Rules</h1>
+<h2>Selected Policy: ${policy.name}</h2>
+
 <fieldset>
-	<legend>Active Policy: ${policy.name}</legend>
+	<legend>
+		<form action="MaintainRules" method=GET>
+			Policy:
+				<select name=policyName onchange="this.form.submit()">
+					<option ${ policy.name == "Default" ? "selected" : "" }>Default</option>				
+					<c:forEach var="policyName" items="${policyList}">
+						<option ${ policy.name == policy ? "selected" : "" }>${policyName}</option>
+					</c:forEach>
+				</select>
+		</form>	
+	</legend>
 	<%@ include file="jspf/showPolicy.jspf" %>
+	<form action="MaintainRules" method=GET>
+		<input type=hidden name=method value=edit>
+		<input type=hidden name=policyName value="${policy.name}">
+		<button type="submit">Edit Policy</button>
+	</form>	
 </fieldset>
-
-<fieldset>
-	<legend>Saved Policies</legend>
-	<form action="MaintainRules" method=POST>
-		<button type="submit">Save Rules</button>
-	</form>
-</fieldset>
-
-	
-<fieldset>
-	<legend>Saved Rules</legend>
-</fieldset>
-
-
 
 </body>
 </html>

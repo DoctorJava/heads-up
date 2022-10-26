@@ -12,11 +12,14 @@
 </style>
 </head>
 <body>
+<H1>HeadsUp Report</H1>
+
+Repeat Test: <a href="${requestUrl}">${requestUrl}</a><br/><br/>
 
 <fieldset>
-	<legend>Heads Up Report: ${report.name}</legend>
+	<legend>Report Name: ${report.name}</legend>
 	<h3>Pass: ${report.pass}</h3>
-	Site: <a href="${report.url}">${report.url}</a>
+	<h3>Site: <a href="${report.url}">${report.url}</a></h3>
 	<table>
 		<tr>
 			<th></th><th>Header</th><th>Actual</th><th>Suggested</th><th>Reference</th>

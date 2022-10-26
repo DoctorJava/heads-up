@@ -1,18 +1,4 @@
-Got Types:
-<ul>
-<%   
-java.util.List<java.util.Map<String,String>> containsTypeList=(java.util.List<java.util.Map<String, String>>)request.getAttribute("containsTypeList");    
-
-for (java.util.Map containsType: containsTypeList) {
-%>
-
-<li><input value="<%=containsType %>"/>
-
-
-<%}%>
-</ul>
-
-<form action="MaintainRules">
+<form action="MaintainRules" method=POST>
 	<table>
 		<tr>
 			<th></th><th>Header</th><th>Required</th><th colspan=2>Contains</th><th>References</th>
@@ -25,7 +11,9 @@ for (java.util.Map containsType: containsTypeList) {
 				<td>${rule.headerName}</td>
 				<td>${rule.required}</td>
 				<td><select name=containsType >
-						<option> 
+						<c:forEach var="type" items="${containsTypeList}">
+							<option ${ rule.containsType == type ? "selected" : "" }>${type}</option>
+						</c:forEach>
 					</select>
 				</td>
 				<td>${rule.contains}</td>
@@ -37,5 +25,5 @@ for (java.util.Map containsType: containsTypeList) {
 			</tr>
 		</c:forEach>
 	</table>
-<input type=submit />
+<input type=submit value="Save"/> 
 </form>
