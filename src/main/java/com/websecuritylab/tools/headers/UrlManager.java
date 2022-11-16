@@ -4,13 +4,14 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.websecuritylab.tools.headers.PolicyHandler.COOKIE_RULE;
 import com.websecuritylab.tools.headers.exceptions.InvalidUrlException;
 import com.websecuritylab.tools.headers.exceptions.SiteNotFoundException;
 import com.websecuritylab.tools.headers.model.Cookie;
 import com.websecuritylab.tools.headers.model.Policy;
 import com.websecuritylab.tools.headers.model.Rule;
 import com.websecuritylab.tools.headers.model.Rule.CONTAINS_TYPE;
+import com.websecuritylab.tools.headers.util.PolicyHandler;
+import com.websecuritylab.tools.headers.util.PolicyHandler.COOKIE_RULE;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -36,11 +37,12 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class UrlHandler {
-    private static final Logger logger = LoggerFactory.getLogger( UrlHandler.class );  
+public final class UrlManager {					// This is not a static Handler because it opens Connection which may cause thread problems
+
+	private static final Logger logger = LoggerFactory.getLogger( UrlManager.class );  
 	private URL _url;
 
-	public UrlHandler(String urlStr) throws InvalidUrlException, MalformedURLException {
+	public UrlManager(String urlStr) throws InvalidUrlException, MalformedURLException {
         boolean valid = validateUrl(urlStr);
 
         if (!valid)  throw new InvalidUrlException ();

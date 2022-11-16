@@ -1,0 +1,21 @@
+<fieldset>
+	<legend>
+		<form action="MaintainRules" method=GET>
+			View Policy:
+				<select name=policyName onchange="this.form.submit()">
+					<option ${ policy.name == "Default" ? "selected" : "" }>Default</option>				
+					<c:forEach var="policyName" items="${policyList}">
+						<option ${ policy.name == policyName ? "selected" : "" }>${policyName}</option>
+					</c:forEach>
+				</select>
+		</form>	
+	</legend>
+	
+	<%@ include file="viewRulesTable.jspf" %>
+	
+	<form action="MaintainRules" method=GET>
+		<input type=hidden name=pageType value=edit>
+		<input type=hidden name=policyName value="${policy.name}">
+		<button type="submit">Edit Policy</button>
+	</form>	
+</fieldset>

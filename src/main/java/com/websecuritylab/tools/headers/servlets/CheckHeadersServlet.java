@@ -23,9 +23,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.websecuritylab.tools.headers.PolicyEnforcer;
-import com.websecuritylab.tools.headers.PolicyHandler;
-import com.websecuritylab.tools.headers.ReferenceHandler;
-import com.websecuritylab.tools.headers.UrlHandler;
+import com.websecuritylab.tools.headers.UrlManager;
 import com.websecuritylab.tools.headers.constants.DoPostParams;
 import com.websecuritylab.tools.headers.constants.ReqAttributes;
 import com.websecuritylab.tools.headers.exceptions.InvalidUrlException;
@@ -36,6 +34,8 @@ import com.websecuritylab.tools.headers.model.Reference;
 import com.websecuritylab.tools.headers.model.Report;
 import com.websecuritylab.tools.headers.model.ReportItem;
 import com.websecuritylab.tools.headers.model.Rule;
+import com.websecuritylab.tools.headers.util.PolicyHandler;
+import com.websecuritylab.tools.headers.util.ReferenceHandler;
 
 /**
  * Servlet implementation class CheckHeaders
@@ -43,21 +43,24 @@ import com.websecuritylab.tools.headers.model.Rule;
 public class CheckHeadersServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger( CheckHeadersServlet.class );  
 	private static final long serialVersionUID = 1L;
-	private static final String JSP_SHOW_REPORT = "/WEB-INF/jsp/showReport.jsp";     
+	//private static final String JSP_SHOW_REPORT = "/WEB-INF/jsp/showReport.jsp";     
+	private static final String JSP_PAGE = "/WEB-INF/jsp/page.jsp";     
 
     public CheckHeadersServlet() {
         super();
-        // TODO Auto-generated constructor stub
+        
     }
     							// GET is used with the URL so the results can be copy/pasted into email/notes.
     
     
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		Policy policy = getPolicy(true);
-		System.out.println("Got Policy from GET: " + policy);
+	    String policyName = req.getParameter(DoPostParams.POLICY_SELECT);
+	    Policy policy = PolicyHandler.getPolicy(policyName);
+
+		//System.out.println("Got Policy from GET: " + policy);
 		//System.out.println("Got URL from GET: " + req.getRequestURI() + "?" + req.getQueryString());
-		System.out.println("Got URL from GET: " + UrlHandler.getURL(req));
-		req.setAttribute(DoPostParams.REQUEST_URL, UrlHandler.getURL(req));
+		//System.out.println("Got URL from GET: " + UrlHandler.getURL(req));
+		req.setAttribute(DoPostParams.REQUEST_URL, UrlManager.getURL(req));
 		doBoth(req, res, policy);
 	}
 
@@ -72,7 +75,7 @@ public class CheckHeadersServlet extends HttpServlet {
 
 	private void doBoth(HttpServletRequest req, HttpServletResponse res, Policy policy) throws ServletException, IOException {
 		String reportName = req.getParameter(DoPostParams.REPORT_NAME);
-		boolean processURL = ("true".equals(req.getParameter(DoPostParams.PROCESS_URL)));
+		boolean processURL = ("url".equals(req.getParameter(DoPostParams.TEST_TYPE)));
 		String testUrl = req.getParameter(DoPostParams.TEST_URL);
 		try {
 //			UrlHandler handler = new UrlHandler(testUrl);
@@ -104,7 +107,9 @@ public class CheckHeadersServlet extends HttpServlet {
 		req.setAttribute("report", report);
 		req.setAttribute(ReqAttributes.POLICY, report.getPolicy());		// JSPF needs ${policy} because it is show on both REPORT and MAINTENANCE screen
 
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);
+		//RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);
+		req.setAttribute(ReqAttributes.PAGE_TYPE, "report");
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_PAGE);
 		// response.setContentType("text/html;charset=UTF-8");
 		dispatcher.forward(req, res);
 	} catch (SiteNotFoundException e) {
@@ -115,19 +120,19 @@ public class CheckHeadersServlet extends HttpServlet {
 	}		
 	}
 	
-	private Policy getPolicy(boolean useDefault ) {
-		Policy policy = PolicyHandler.getPolicy(MaintainRulesServlet.JSON_READ_POLICY);
-		Map<String,List<Reference>> refMap = ReferenceHandler.savedReferences(MaintainRulesServlet.JSON_READ_REFERENCES);
-		for ( Rule r: policy.getRules()) {
-			System.out.println("Adding Rule ("+r.getHeaderName()+") with References: " + refMap.get(r.getHeaderName()));
-		}
-		return policy;
-	}
+//	private Policy getPolicy(boolean useDefault ) {
+//		Policy policy = PolicyHandler.getPolicy(MaintainRulesServlet.JSON_READ_POLICY);
+//		Map<String,List<Reference>> refMap = ReferenceHandler.savedReferences(MaintainRulesServlet.READ_REFERENCES);
+////		for ( Rule r: policy.getRules()) {
+////			System.out.println("Adding Rule ("+r.getHeaderName()+") with References: " + refMap.get(r.getHeaderName()));
+////		}
+//		return policy;
+//	}
 	
 	private Headers getHeadersFromUrl(String url, Policy policy) throws MalformedURLException, InvalidUrlException, SiteNotFoundException {
-		UrlHandler handler = new UrlHandler(url);
+		UrlManager urlManager = new UrlManager(url);
 
-		Map<String, List<String>> headerMap = handler.getHeaderMap();
+		Map<String, List<String>> headerMap = urlManager.getHeaderMap();
 		return new Headers(headerMap, policy);
 
 	}

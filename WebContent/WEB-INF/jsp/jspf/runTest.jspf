@@ -1,0 +1,43 @@
+<fieldset>
+	<legend>Run Test</legend>
+
+	<form action='CheckHeaders' method=GET >
+		<h3>Report Name: <input type=text name='reportName' size=30/></h3>	
+			
+		<h3>Test Method:</h3>
+		<div class='indent'>
+			<input name=testType type=radio value="url" onclick='showHide("urlTest", "pasteTest")' checked/>Enter URL 
+			<input name=testType type=radio value="headers" onclick='showHide("pasteTest", "urlTest")' />Paste Headers
+			
+			<div id='urlTest'>
+				<input type=text name='testUrl' size=40 placeholder='http://'/>
+			</div>
+			<div id='pasteTest' class='hidden'>
+				<textarea  name='testHeaders' rows=8 cols=50 placeholder='Paste Copied Headers Here'></textarea>
+			</div>
+		</div>
+		
+		<h3>Rules:</h3>
+		<div class='indent'>
+			<input name=rulesType type=radio onclick='showHide("savedRules", "customRules")' checked/>Saved Rules 
+			<input name=rulesType type=radio onclick='showHide("customRules", "savedRules")' />Custom Rules
+			
+			<div id='savedRules'>
+				<select name=policySelect>
+					<option ${ policy.name == "Default" ? "selected" : "" }>Default</option>				
+					<c:forEach var="policyName" items="${policyList}">
+						<option ${ policy.name == policyName ? "selected" : "" }>${policyName}</option>
+					</c:forEach>
+				</select>
+			</div>
+			<div id='customRules' class='hidden'>
+				<textarea  name='rules' rows=8 cols=50 placeholder='Paste JSON Rules Here'></textarea>
+			</div>		
+		</div>
+		
+		<br/>
+		<button type='submit'>Check Headers</button>		
+
+		
+	</form>	
+</fieldset>

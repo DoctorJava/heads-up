@@ -1,0 +1,25 @@
+body {
+	font-family: Arial;
+}
+
+fieldset {
+	border: 2px solid #AA0000;
+}
+
+.indent {
+	margin-left:50px;
+}
+
+.hidden { 
+	display: none;
+}
+
+
+tr.compliant td { 
+	outline: thin solid;
+	background-color: lightgreen; 
+}
+tr.noncompliant td { 
+	outline: thin solid;
+	background-color: yellow;
+}

@@ -62,7 +62,7 @@ public class PolicyEnforcer {
 		List<String> ruleValues = rule.getContains();
 		List<String> headerValues = _headers.getValues( rule.getHeaderName() );
 		
-		System.out.println("Found ("+headerValues.size()+") Header Values for ("+rule.getHeaderName() +") KEY: " + headerValues);
+		//System.out.println("Found ("+headerValues.size()+") Header Values for ("+rule.getHeaderName() +") KEY: " + headerValues);
 		
 		String ruleVal;				
 		String headerVal;						// Header strings start with a space when constructed with conn.getHeaderFields();

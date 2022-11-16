@@ -1,8 +1,0 @@
-<h3>Target URL:</h3>
-<div style="margin-left:50px">
-	Enter the URL: <input type=radio name=processUrl value=true checked />
-		<input type=text name="testUrl" />
-		</br>
-	Paste Headers: <input type=radio name=processUrl value=false /> 
-		<textarea  name="testHeaders" rows="8" cols="50"  style="vertical-align:top"></textarea>
-</div>

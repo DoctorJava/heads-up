@@ -1,4 +1,4 @@
-package com.websecuritylab.tools.headers;
+package com.websecuritylab.tools.headers.util;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,9 +23,18 @@ import com.websecuritylab.tools.headers.model.Rule.CONTAINS_TYPE;
 import com.websecuritylab.tools.headers.servlets.MaintainRulesServlet;
 
 public class ReferenceHandler {
-    private static final Logger logger = LoggerFactory.getLogger( ReferenceHandler.class );  
-    
+	private static final ReferenceHandler _instance = new ReferenceHandler();					// This static class is not instantiated externally
 
+	private static final Logger logger = LoggerFactory.getLogger( ReferenceHandler.class );  
+	
+	private static Map<String,List<Reference>> _referenceMap;
+	
+	//
+	// Private Constructor
+	//
+	private ReferenceHandler() {
+		_referenceMap = createDefaultReferences();
+	}
 	
 	public static Map<String,List<Reference>> createDefaultReferences() {
 				
@@ -73,6 +82,10 @@ public class ReferenceHandler {
 	
 	public static Map<String,List<Reference>> savedReferences(String filename){
 		return createDefaultReferences();
+	}
+	
+	public static List<Reference> getReferencesByHeader(String headerName){
+		return _referenceMap.get(headerName);
 	}
 	
 //	public static Policy savedPolicy(String filename) {

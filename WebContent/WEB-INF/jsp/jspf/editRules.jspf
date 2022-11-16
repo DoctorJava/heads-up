@@ -1,0 +1,46 @@
+<fieldset>
+	<legend>
+		<form action="MaintainRules" method=GET>
+			<input type=hidden name=pageType value=edit>	
+			Edit Policy:
+				<select name=policyName onchange="this.form.submit()">
+					<option ${ policy.name == "Default" ? "selected" : "" }>Default</option>				
+					<c:forEach var="policyName" items="${policyList}">
+						<option ${ policy.name == policyName ? "selected" : "" }>${policyName}</option>
+					</c:forEach>
+				</select>
+		</form>	
+	</legend>
+	<form action="MaintainRules" method=POST>
+		<table>
+			<tr>
+				<th></th><th>Header</th><th>Required</th><th>Contains</th><th colspan=3>Values</th><th>References</th>
+			</tr>
+			<c:forEach var="rule" items="${policy.rules}">
+				<tr>
+					<td>
+		
+					</td>
+					<td>${rule.headerName}</td>
+					<td align=middle><input type=checkbox name="${rule.headerName}_required" ${ rule.required ? "checked" : ""}/></td>
+					<td><select name="${rule.headerName}_containsType" >
+							<c:forEach var="type" items="${containsTypeList}">
+								<option name="${rule.containsType}" ${ rule.containsType == type ? "selected" : "" }>${type}</option>
+							</c:forEach>
+						</select>
+					</td>
+					<td><input type=text name="${rule.headerName}_containsValue" value="${rule.contains[0]}" /></td>
+					<td><input type=text name="${rule.headerName}_containsValue" value="${rule.contains[1]}" /></td>
+					<td><input type=text name="${rule.headerName}_containsValue" value="${rule.contains[2]}" /></td>
+					<td>
+						<c:forEach var="ref" items="${rule.references}">
+							<a href="${ref.url}" target="_blank">${ref.title}</a> | 
+						</c:forEach>
+					</td>
+				</tr>
+			</c:forEach>
+		</table>
+	Saved Policy Name: <input type=text name=newPolicyName required/>
+	<input type=submit value="Save"/> 
+	</form>
+</fieldset>

@@ -8,7 +8,7 @@ import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.websecuritylab.tools.headers.UrlHandler;
+import com.websecuritylab.tools.headers.UrlManager;
 
 public class Headers {
     private static final Logger logger = LoggerFactory.getLogger( Headers.class );  
@@ -21,14 +21,14 @@ public class Headers {
 	
 	public Headers(Map<String, List<String>> headerMap, Policy policy) {
 		_headerMap = new CaseInsensitiveMap<String, List<String>>(headerMap);
-		_rawHeaders = UrlHandler.generateRawHeaders(headerMap);
-		_cookies  = UrlHandler.generateCookies(_rawHeaders, policy);		
+		_rawHeaders = UrlManager.generateRawHeaders(headerMap);
+		_cookies  = UrlManager.generateCookies(_rawHeaders, policy);		
 	}
 	
 	public Headers(String rawHeaders, Policy policy) {
 		_rawHeaders = rawHeaders;
-		_headerMap  = UrlHandler.generateHeaderMap(rawHeaders);
-		_cookies  = UrlHandler.generateCookies(rawHeaders, policy);		
+		_headerMap  = UrlManager.generateHeaderMap(rawHeaders);
+		_cookies  = UrlManager.generateCookies(rawHeaders, policy);		
 	}	
 
 
