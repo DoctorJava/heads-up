@@ -33,6 +33,8 @@
 </div>
 
 <div id="Edit" class="tabcontent ${pageType == 'report' ? '' : 'hidden'}">
+	<%-- 	Save Test: <a href="${requestUrl}&pageType=print">${requestUrl}</a><br/><br/> --%>
+	 <button onclick="window.location.href='${requestUrl}&pageType=print'">Print/Save Test</button><br/><br/>
 	<%@ include file="jspf/showReport.jspf" %>
 </div>
 

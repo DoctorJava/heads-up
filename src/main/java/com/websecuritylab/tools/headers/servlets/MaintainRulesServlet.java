@@ -30,14 +30,14 @@ public class MaintainRulesServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger( MaintainRulesServlet.class );  
 	private static final long serialVersionUID = 1L;
 	private static final String JSP_PAGE = "/WEB-INF/jsp/page.jsp";     
-	private static final String JSP_EDIT_RULES = "/WEB-INF/jsp/editRules.jsp";     
-	private static final String JSP_SHOW_RULES = "/WEB-INF/jsp/showRules.jsp";     
+	//private static final String JSP_EDIT_RULES = "/WEB-INF/jsp/editRules.jsp";     
+	//private static final String JSP_SHOW_RULES = "/WEB-INF/jsp/showRules.jsp";     
 	//public static final String JSON_READ_REFERENCES  = "/opt/apps/data/json/headsUp-references.json";     	// Used by CheckHandlerServlet
 	//private static final String JSON_WRITE_REFERENCES = "/opt/apps/data/json/headsUp-referencesOut.json";     
 	public static String REFERENCES_FILE = new PropsManager().getProperty(PropName.REFERENCES_FILE);
 	
 	public static final String JSON_READ_POLICY  = "headsUp-policy-default";     				// Used by CheckHandlerServlet
-	private static final String JSON_WRITE_POLICY = "headsUp-policy-custom";     
+	//private static final String JSON_WRITE_POLICY = "headsUp-policy-custom";     
 	private static final String POLICY_FOLDER = new PropsManager().getProperty(PropName.POLICY_FOLDER);
 
 
@@ -51,7 +51,7 @@ public class MaintainRulesServlet extends HttpServlet {
 		//String pageType = ( "edit".equals(req.getParameter(DoPostParams.PAGE_TYPE) ) ? "edit" : "view");
 		String pageType = req.getParameter(DoPostParams.PAGE_TYPE);
 		String JSP = JSP_PAGE;
-		req.setAttribute(ReqAttributes.PAGE_TYPE, pageType);
+		req.setAttribute(ReqAttributes.PAGE_TYPE, pageType);					// This is either 'view' or 'edit'
 		
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP);
 

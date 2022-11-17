@@ -43,7 +43,7 @@ import com.websecuritylab.tools.headers.util.ReferenceHandler;
 public class CheckHeadersServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger( CheckHeadersServlet.class );  
 	private static final long serialVersionUID = 1L;
-	//private static final String JSP_SHOW_REPORT = "/WEB-INF/jsp/showReport.jsp";     
+	private static final String JSP_PRINT_REPORT = "/WEB-INF/jsp/printReport.jsp";     
 	private static final String JSP_PAGE = "/WEB-INF/jsp/page.jsp";     
 
     public CheckHeadersServlet() {
@@ -77,6 +77,11 @@ public class CheckHeadersServlet extends HttpServlet {
 		String reportName = req.getParameter(DoPostParams.REPORT_NAME);
 		boolean processURL = ("url".equals(req.getParameter(DoPostParams.TEST_TYPE)));
 		String testUrl = req.getParameter(DoPostParams.TEST_URL);
+		String pageType = req.getParameter(DoPostParams.PAGE_TYPE);					// req param is either 'print' or NULL
+		if ( pageType == null ) pageType = "report";								// THis is so pageType is added to UrlManager.getURL without being present in the original URL
+		req.setAttribute(ReqAttributes.PAGE_TYPE, pageType);						// req attribute is either 'report' or 'print'
+		String JSP = ( "print".equals(pageType) ? JSP_PRINT_REPORT : JSP_PAGE);
+
 		try {
 //			UrlHandler handler = new UrlHandler(testUrl);
 //			Map<String, List<String>> headerMap = handler.getHeaderMap();
@@ -109,7 +114,7 @@ public class CheckHeadersServlet extends HttpServlet {
 
 		//RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_SHOW_REPORT);
 		req.setAttribute(ReqAttributes.PAGE_TYPE, "report");
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP_PAGE);
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(JSP);
 		// response.setContentType("text/html;charset=UTF-8");
 		dispatcher.forward(req, res);
 	} catch (SiteNotFoundException e) {

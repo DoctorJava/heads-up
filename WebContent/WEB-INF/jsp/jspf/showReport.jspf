@@ -1,5 +1,3 @@
-Save Test: <a href="${requestUrl}">${requestUrl}</a><br/><br/>
-
 <fieldset>
 	<legend>Report Name: ${report.name}</legend>
 	<h3>Pass: ${report.pass}</h3>
