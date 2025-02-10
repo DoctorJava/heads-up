@@ -17,6 +17,9 @@ public final class FileHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger( FileHandler.class );  
 
+	public static boolean folderExists(String folderPath) {
+		return true;
+	}
 										// Accept folderNamws with, or without, '/' 
 										// Accept extensions with, or without, '.'
 	public static List<String> getFilenamesInFolder(boolean stripExt, String folderName, String ext){

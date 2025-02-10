@@ -162,15 +162,15 @@ public class CheckHeadersServlet extends HttpServlet {
         
         for (Rule rule : policy.getRules()) { 
         	String headerName = rule.getHeaderName();
-        	//System.out.println("Getting Report: " + rule.getHeaderName() + ": "+ rule.isRequired() + ": "+  enforcer.isPresent(rule));
+        	System.out.println("GGGGGGGGGGGetting Report: " + rule.getHeaderName() + ": "+ rule.isRequired() + ":  is CaseSensitive: "+ policy.isCaseSensitiveValues());
         	boolean present =  enforcer.isPresent(rule);
         	boolean compliant = false;
-        	if ( !present && rule.isRequired()) {
-        		compliant = false;
-        	}else {
-        		compliant = enforcer.isCompliant(rule, policy.isCaseSensitiveValues());
+        	if (rule.isRequired()) {
+        		if ( !present ) compliant = false;
+         		compliant = enforcer.isCompliant(rule, policy.isCaseSensitiveValues());
+         		
+                items.add(new ReportItem(rule, headerName, headers.getValues(headerName), present, compliant));
         	}
-            items.add(new ReportItem(rule, headerName, headers.getValues(headerName), present, compliant));
         	
         }
  		

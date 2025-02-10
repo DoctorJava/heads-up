@@ -6,6 +6,15 @@
 	id="WebApp_ID" version="3.0">	
 	
 	<display-name>HeadsUp</display-name>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<listener>
+	   <listener-class>
+	      com.websecuritylab.tools.headers.HeadsUpStartupListener 
+	   </listener-class>
+	</listener>
+   
 	<servlet>
 		<description>
 		</description>
@@ -39,12 +48,4 @@
 		<servlet-name>CheckHttpMethods</servlet-name>
 		<url-pattern>/CheckHttpMethods</url-pattern>
 	</servlet-mapping>
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-		<welcome-file>index.htm</welcome-file>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>default.html</welcome-file>
-		<welcome-file>default.htm</welcome-file>
-		<welcome-file>default.jsp</welcome-file>
-	</welcome-file-list>
 </web-app>

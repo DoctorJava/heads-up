@@ -1,5 +1,6 @@
 package com.websecuritylab.tools.headers.util;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +32,7 @@ public class PolicyHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger( PolicyHandler.class );  
     
-	private static final String POLICY_FOLDER = new PropsManager().getProperty(PropName.POLICY_FOLDER);
+	private static final String HEADSUP_FOLDER = new PropsManager().getProperty(PropName.HEADSUP_FOLDER);
 	
 	public static final String POLICY_EXT  = "json";     
 	
@@ -38,6 +40,19 @@ public class PolicyHandler {
     
     public enum COOKIE_RULE{SESSION, NO_DUPLICATES} 
     
+	public PolicyHandler() {					// Create HeadsUp data folders, if they don't exist (Ex: /op/apps/headsUp/policy )
+//		logger.info("Checking the HeadsUp Policy folder specified in headsUp.properties:");
+//		File file = new File(HEADSUP_FOLDER); 
+//		try {
+//			FileUtils.forceMkdir(file);
+//		} catch (IOException e) {
+//										// Not sure why this would fail, or what to do about it
+//			logger.error("Error creating the HeadsUp Policy folder specified in headsUp.properties:" + HEADSUP_FOLDER);
+//			e.printStackTrace();
+//		}
+
+	}
+
 	public static Rule getRule (COOKIE_RULE cr) {	
 		switch (cr) {
 			case SESSION:
@@ -61,13 +76,13 @@ public class PolicyHandler {
 	}
 	
 	public static List<String> getPolicyNames(){
-		return FileHandler.getFilenamesInFolder(true,POLICY_FOLDER,POLICY_EXT);
+		return FileHandler.getFilenamesInFolder(true,HEADSUP_FOLDER,POLICY_EXT);
 	}
 	
 	
 	public static Policy getPolicy(String policyName) {
 		if (Policy.DEFAULT.equals(policyName)) return getDefaultPolicy();
-		String filename = POLICY_FOLDER + policyName + "." + POLICY_EXT;
+		String filename = HEADSUP_FOLDER + policyName + "." + POLICY_EXT;
 		Policy policy = null;	
 		try {
 			logger.info("Reading policy from file: " + filename);
