@@ -1,6 +1,6 @@
 package com.websecuritylab.tools.headers;
 
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +8,7 @@ import com.websecuritylab.tools.headers.PropsManager.PropName;
 import com.websecuritylab.tools.headers.servlets.CheckHeadersServlet;
 import com.websecuritylab.tools.headers.util.FileHandler;
 
-public class HeadsUpStartupListener implements javax.servlet.ServletContextListener {
+public class HeadsUpStartupListener implements jakarta.servlet.ServletContextListener {
     private static final Logger logger = LoggerFactory.getLogger( HeadsUpStartupListener.class );  
 	
     private static final String HEADSUP_FOLDER = new PropsManager().getProperty(PropName.HEADSUP_FOLDER);
