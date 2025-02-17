@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">	
+	
+	<display-name>HeadsUp</display-name>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<listener>
+	   <listener-class>
+	      com.websecuritylab.tools.headers.HeadsUpStartupListener 
+	   </listener-class>
+	</listener>
+   
+	<servlet>
+		<description>
+		</description>
+		<display-name>CheckHeaders</display-name>
+		<servlet-name>CheckHeaders</servlet-name>
+		<servlet-class>com.websecuritylab.tools.headers.servlets.CheckHeadersServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>MaintainRules</display-name>
+		<servlet-name>MaintainRules</servlet-name>
+		<servlet-class>com.websecuritylab.tools.headers.servlets.MaintainRulesServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>CheckHttpMethods</display-name>
+		<servlet-name>CheckHttpMethods</servlet-name>
+		<servlet-class>com.websecuritylab.tools.headers.servlets.CheckHttpMethods</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CheckHeaders</servlet-name>
+		<url-pattern>/CheckHeaders</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MaintainRules</servlet-name>
+		<url-pattern>/MaintainRules</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CheckHttpMethods</servlet-name>
+		<url-pattern>/CheckHttpMethods</url-pattern>
+	</servlet-mapping>
+</web-app>
+

@@ -14,8 +14,8 @@ public class PropsManager {
 	private final String PROPS_FILE = "headsUp.properties";
 
 	public enum PropName {
-		POLICY_FOLDER,
-		REFERENCES_FILE
+		HEADSUP_FOLDER,
+		REFERENCES_FILENAME
 	}
 
 	private static HashMap<PropName, String> _props = new HashMap<PropName, String>();
@@ -25,7 +25,7 @@ public class PropsManager {
 	// Constructor
 	//
 	public PropsManager() {
-		System.out.println("In PropsHandler Got POLICY_FOLDER: " + PROPS_FILE);
+		System.out.println("In PropsHandler Got HEADSUP_FOLDER: " + PROPS_FILE);
 		try {
 			loadProperties();
 		} catch (FileNotFoundException e) {
@@ -56,8 +56,8 @@ public class PropsManager {
 		}
 	}
 
-	// Usage: PropsHandler.getInstance().getProperty(PropName.POLICY_FOLDER))
-	// PropsHandler.getProperty(SSOProperties.PropName.POLICY_FOLDER)
+	// Usage: PropsHandler.getInstance().getProperty(PropName.HEADSUP_FOLDER))
+	// PropsHandler.getProperty(SSOProperties.PropName.HEADSUP_FOLDER)
 	public String getProperty(PropName pName) {
 		return _props.get(pName);
 	}

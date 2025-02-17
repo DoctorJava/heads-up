@@ -2,27 +2,39 @@ apply plugin: 'java-library'
 apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 
-project.webAppDirName = 'WebContent'
+//project.webAppDirName = 'WebContent'
 
 repositories {
-	jcenter()
+	mavenCentral()
 }
+// For required libs see: https://www.rotanhanrahan.com/2023/08/09/hw-jax-rs-tc10-jdk17
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+//version = '2.0'  // This adds the version to the warfile name
 
 dependencies {
 
-	providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+	compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.0.0'
 	
-	//providedCompile group: 'javax.servlet.jsp.jstl', name: 'jstl', version: '1.2'			// Not sure why this didn't work.  Added json.jar to  WEB-INF/lib
-	//compile group: 'javax.servlet.jsp.jstl', name: 'jstl', version: '1.2'
+	implementation group: 'jakarta.servlet.jsp.jstl', name: 'jakarta.servlet.jsp.jstl-api', version: '3.0.2'
+	implementation group: 'org.glassfish.web', name: 'jakarta.servlet.jsp.jstl', version: '3.0.1'
 	
-	compile group: 'commons-validator', name: 'commons-validator', version: '1.6'
-	compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'		// Used for CaseInsensitiveMap:  collections4 necessary to support generics<>
-	compile group: 'commons-io', name: 'commons-io', version: '2.11.0'
 	
-	compile group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+	implementation group: 'commons-validator', name: 'commons-validator', version: '1.9.0'
+
+	implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'		// Used for CaseInsensitiveMap:  collections4 necessary to support generics<>
+	implementation group: 'commons-io', name: 'commons-io', version: '2.18.0'
+
 	
-	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
-	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.12.1'
+	
+	implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
+	implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.5.16'
+	implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.5.16'
 
 }

@@ -1,5 +1,6 @@
 package com.websecuritylab.tools.headers.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.websecuritylab.tools.headers.util.ReferenceHandler;
@@ -45,9 +46,15 @@ public final class Rule {
 //		this.contains = containsExact;
 //		this.containsType = CONTAINS_TYPE.EXACT;
 //	}	
-	public Rule(String name,  boolean required, List<String> contains, CONTAINS_TYPE type ) {
+	public Rule(String name,  boolean required, List<String> htmlContains, CONTAINS_TYPE type ) {
 		this.headerName = name;
 		this.required = required;
+		
+		List<String> contains = new ArrayList<>();		// HTML returns empty strings for the extra non-specified values
+		for ( String aContains : htmlContains) {
+			if (aContains != null &  aContains.length() > 0 ) contains.add(aContains);
+		}
+		
 		this.contains = contains;
 		this.containsType = type;
 		this.references = ReferenceHandler.getReferencesByHeader(name);

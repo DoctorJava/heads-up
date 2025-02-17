@@ -1,18 +1,12 @@
 package com.websecuritylab.tools.headers;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.websecuritylab.tools.headers.model.Cookie;
 import com.websecuritylab.tools.headers.model.Headers;
-import com.websecuritylab.tools.headers.model.Policy;
 import com.websecuritylab.tools.headers.model.Rule;
-import com.websecuritylab.tools.headers.servlets.MaintainRulesServlet;
 
 public class PolicyEnforcer {
     private static final Logger logger = LoggerFactory.getLogger( PolicyEnforcer.class );  
@@ -62,7 +56,9 @@ public class PolicyEnforcer {
 		List<String> ruleValues = rule.getContains();
 		List<String> headerValues = _headers.getValues( rule.getHeaderName() );
 		
-		//System.out.println("Found ("+headerValues.size()+") Header Values for ("+rule.getHeaderName() +") KEY: " + headerValues);
+		if (headerValues == null ) return false;
+		
+		System.out.println("Found ("+headerValues.size()+") Header Values for ("+rule.getHeaderName() +") KEY: " + headerValues);
 		
 		String ruleVal;				
 		String headerVal;						// Header strings start with a space when constructed with conn.getHeaderFields();
@@ -76,11 +72,11 @@ public class PolicyEnforcer {
 				break;
 			case ANY:
 				for ( String ruleValAny : ruleValues ) {
-					ruleVal = ruleValAny.trim();				
+					ruleVal = ruleValAny.trim();	
+					//if ( ruleVal.length() == 0) continue; 					// Rule with empty strings are ignored	
 					if ( !caseSensitive ) ruleVal = ruleVal.toUpperCase();
 					for ( String headerValAny : headerValues ) {
 						headerVal = headerValAny.trim();						// Header strings start with a space when constructed with conn.getHeaderFields();
-						
 						
 						System.out.println(">>> Checking ANY Header Values for ("+headerVal +") equals: " + ruleVal);
 						
@@ -97,6 +93,7 @@ public class PolicyEnforcer {
 				for ( String ruleValAll : ruleValues ) {
 					boolean foundIt = false;
 					ruleVal = ruleValAll.trim();				
+					//if ( ruleValAll.length() == 0) continue; 					// Rule with empty strings are ignored	
 					System.out.println(">>> Checking ruleVal equals: " + ruleVal);
 					if ( !caseSensitive ) ruleVal = ruleVal.toUpperCase();
 					for ( String headerValAll : headerValues ) {
